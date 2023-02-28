@@ -1,0 +1,98 @@
+---
+title: "R Notebook"
+author: "Patipan Saktanawat"
+output:
+  pdf_document: default
+  html_notebook: default
+  word_document: default
+---
+# DATA VISUALIZATION WITH R
+with mtcars built-in dataset
+
+I will show 6 example of visualize from mtcars dataset with ggplot2
+
+
+**firstly, let me download the package**
+```{r}
+library(tidyverse)
+library(patchwork)
+library(lubridate)
+library(ggplot2)
+library(dplyr)
+library(ggthemes)
+install.packages('tinytex')
+tinytex::install_tinytex()
+```
+ 
+ let's see the graph
+ 
+ 1.Chart 1 See the frequency of the gear level
+```{r}
+ggplot(mtcars, aes(factor(gear), fill = gear)) +
+  geom_bar() +
+  labs(title = "The number of car gear level",
+       x = "gear level",
+       y = "number of car use",
+       caption = "from mtcars dataset") +
+  theme_minimal()
+```
+ 
+ 2.Chart 2 see the distribution of Horse Power
+```{r}
+ggplot(mtcars, aes(hp), color = 'salmon') +
+  geom_density(kernel = "gaussian") + 
+  labs(title = "The distribution of HP",
+       x = "horse power",
+       y = "density")+
+  theme_economist()
+```
+ 
+3.Chart 3 relation ship between gear and hp
+```{r}
+ggplot(mtcars, aes(factor(gear),hp))+
+  geom_boxplot(aes(col = gear))
+```
+
+4.See the relation ship between wt and mpg of 3 hp segment
+```{r}
+m <- m %>%
+  mutate(cyl = factor(cyl))
+m %>%
+  select(wt, mpg, hp) %>%
+  mutate(hp_segment = case_when(
+    hp < 100 ~ "low",
+    hp < 200 ~ "medium",
+    TRUE ~ "high"
+  )) %>% 
+  mutate(hp_segment = factor(
+    hp_segment,
+    labels = c("low", "medium", "high"),
+    levels = c("low", "medium", "high"),
+    ordered = TRUE) ) %>%
+  ggplot(mapping = aes(wt, mpg, 
+                       color=hp_segment)) +
+  geom_point(size=4, alpha=0.8) +
+  scale_color_manual(values = c("red",
+                                     "gold",
+                                     "blue"))
+```
+
+5.Chart 5 car horse power of each cylinder number
+```{r}
+ggplot(mtcars, aes(factor(cyl), hp)) + 
+  geom_boxplot() +
+  theme_dark()+
+  labs(title = "car horse power of each cylinder",
+       x = "Number of Cylinder",
+       y = "Horse Power")
+```
+
+6.Chart 6 distinguish the effect of Auto or Munual transmission to the HP and MPG
+```{r}
+ggplot(mtcars, aes(mpg, hp, col = am)) + 
+  geom_point(size = 3, alpha = 0.8) +
+  facet_wrap(~ am) +
+  theme_minimal()+
+  labs(title = "distinguish the effect of Auto or Munual transmission to the HP and MPG")
+
+```
